@@ -72,13 +72,14 @@ executable reticule-minor
     , linear
     , megaparsec
     , optparse-applicative
+    , vector
     , random
     , reticule-minor
     , text
     , transformers
 
   hs-source-dirs:   app
-  ghc-options:      -threaded -O2 -with-rtsopts=-N
+  ghc-options:      -threaded -O2 "-with-rtsopts=-N"
   default-language: GHC2021
 
 test-suite reticule-minor-test

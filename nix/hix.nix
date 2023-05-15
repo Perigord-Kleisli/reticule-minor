@@ -9,6 +9,7 @@
         doHaddock = false;
       };
       packages.OpenGLRaw.components.library.doHaddock = false;
+      enableProfiling = true;
     }
   ];
 

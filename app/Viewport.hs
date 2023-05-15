@@ -5,23 +5,21 @@
 module Viewport (viewWindow) where
 
 import Control.Lens
+import System.Exit
 import Control.Monad
-import Control.Monad.Trans.State
+import Control.Monad.Trans.State.Strict
+import Data.Vector.Storable (unsafeToForeignPtr)
 import Graphics.Gloss
-import Data.IORef
 import Graphics.Gloss.Interface.IO.Game (playIO)
 import Graphics.Gloss.Interface.IO.Interact
-import Graphics.Gloss.Juicy
 import Linear.V2
 import Reticule.Utils
 import Reticule.Types
 import Codec.Picture.Types
-import System.Mem
 import Control.Monad.Trans.Class
 
-
 data ViewportState = ViewPortState
-  { _lastEvent :: Event
+  { _lastEvent :: !Event
   , _viewportScale :: !Float
   , _viewportOrigin :: V2 Float
   , _viewportLoc :: V2 Float
@@ -59,6 +57,10 @@ viewportRenderer = do
               fromImageRGBA8 image
   return (Pictures [viewport, eventText])
 
+fromImageRGBA8 :: Image PixelRGBA8 -> Picture
+fromImageRGBA8 (Image { imageWidth = w, imageHeight = h, imageData = imgData }) = bitmapOfForeignPtr w h (BitmapFormat TopToBottom PxRGBA) ptr False
+            where (ptr, _, _) = unsafeToForeignPtr imgData
+
 untilEvent :: (Event -> Bool) -> Viewport () -> Viewport ()
 untilEvent f m = repeatActions %= ((f, m) :)
 
@@ -76,11 +78,12 @@ eventHandler event = do
   -- isn't pattern matched. Mostly intended for the `repeatedActions` item
 
   case event of
-    EventKey (MouseButton LeftButton) Down _ clickLoc -> do 
+    EventKey (SpecialKey KeyEsc) _ _ _ -> lift exitSuccess
+    EventKey (MouseButton LeftButton) Down _ clickLoc -> do
       initialCoord <- gets _viewportLoc
       untilKeyRelease (MouseButton LeftButton) do
         gets _lastEvent >>= \case
-          EventMotion coord -> do 
+          EventMotion coord -> do
             viewportLoc .= (fromTup coord - fromTup clickLoc) + initialCoord
           _ -> return ()
     EventKey (MouseButton WheelUp) Up _ (fromTup -> coord) -> do
@@ -104,6 +107,6 @@ viewWindow !image = do
     [rgb|#0B0B0B|]
     60
     (initialViewPortState image)
-    (fmap fst . runStateT viewportRenderer)
-    (\event -> fmap snd . runStateT (eventHandler event))
-    (\t -> fmap snd . runStateT (timeHandler t))
+    (evalStateT viewportRenderer)
+    (execStateT . eventHandler)
+    (execStateT . timeHandler)

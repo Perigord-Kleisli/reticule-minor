@@ -6,7 +6,6 @@ import Control.Concurrent
 import Codec.Picture
 import Codec.Picture.Types
 import Reticule.Types
-import Data.IORef
 
 renderer :: RenderedImage -> IO ()
 renderer image = do
@@ -18,6 +17,6 @@ renderer image = do
 
 main :: IO ()
 main = do
-  image <- createMutableImage 400 300 (PixelRGBA8 255 255 255 0) >>= newIORef
+  image <- createMutableImage 400 300 (PixelRGBA8 255 255 255 0)
   _ <- forkIO $ renderer image
   V.viewWindow image
