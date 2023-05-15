@@ -35,7 +35,18 @@
       flake
       // {
         legacyPackages = pkgs;
-        packages.default = flake.packages."reticule-minor:exe:reticule-minor";
+        devShells.default = flake.devShells.default.overrideAttrs (oldAttrs: {
+            LD_PRELOAD = "${pkgs.freeglut}/lib/libglut.so";
+          });
+        packages.default = flake.packages."reticule-minor:exe:reticule-minor".overrideAttrs (oldAttrs: {
+          nativeBuildInputs = (oldAttrs.nativeBuildInputs or []) ++ [pkgs.makeWrapper];
+          buildInputs = (oldAttrs.buildInputs or []) ++ [pkgs.freeglut];
+          postInstall =
+            (oldAttrs.postInstall or "")
+            + ''
+              wrapProgram $out/bin/reticule-minor --set LD_PRELOAD "${pkgs.freeglut}/lib/libglut.so"
+            '';
+        });
       });
 
   # --- Flake Local Nix Configuration ----------------------------

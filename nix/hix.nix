@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{pkgs, ...}: rec {
   name = "reticule-minor";
   compiler-nix-name = "ghc925";
   index-state = "2023-01-22T00:00:00Z";
@@ -15,12 +15,9 @@
 
   shell = {
     withHoogle = true;
-    shellHook = ''
-      alias cabal='LD_PRELOAD="${pkgs.freeglut}/lib/libglut.so" cabal'
-    '';
-    tools.cabal = "latest";
-    tools.cabal-fmt = "latest";
-    tools.hlint = "latest";
-    tools.haskell-language-server = "latest";
+    tools.cabal = {inherit index-state; };
+    tools.cabal-fmt = {inherit index-state; };
+    tools.hlint = {inherit index-state; };
+    tools.haskell-language-server = {inherit index-state; };
   };
 }
