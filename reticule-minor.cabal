@@ -39,6 +39,7 @@ library
   exposed-modules:
     Reticule.Types
     Reticule.Utils
+    Reticule.Renderer
 
   -- other-modules:
   -- other-extensions:
