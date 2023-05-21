@@ -4,19 +4,19 @@
 
 module Viewport (viewWindow) where
 
+import Codec.Picture.Types
 import Control.Lens
-import System.Exit
 import Control.Monad
+import Control.Monad.Trans.Class
 import Control.Monad.Trans.State.Strict
 import Data.Vector.Storable (unsafeToForeignPtr)
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game (playIO)
 import Graphics.Gloss.Interface.IO.Interact
 import Linear.V2
-import Reticule.Utils
 import Reticule.Types
-import Codec.Picture.Types
-import Control.Monad.Trans.Class
+import Reticule.Utils
+import System.Exit
 
 data ViewportState = ViewPortState
   { _lastEvent :: !Event
@@ -45,21 +45,25 @@ initialViewPortState image =
 
 viewportRenderer :: Viewport Picture
 viewportRenderer = do
-  eventText <- Color [rgb|#FFFFFF|] . scale 0.1 0.1 . Text . show . _lastEvent <$> get
-
+  image <- gets _renderedImage >>= unsafeFreezeImage
+  let info =
+        translate 0 (negate $ (+ 25) $ (/ 2) $ fromIntegral $ imageHeight image)
+          . Color [rgb|#FFFFFF|]
+          . scale 0.1 0.1
+          . Text
   viewportLoc' <- gets _viewportLoc
   viewportScale' <- gets _viewportScale
-  image <- gets _renderedImage >>= unsafeFreezeImage
   let viewport =
         Color [rgb|#323232|] $
           unV2 translate viewportLoc' $
             join scale viewportScale' $
               fromImageRGBA8 image
-  return (Pictures [viewport, eventText])
+  return (Pictures [viewport, info "Rendering"])
 
 fromImageRGBA8 :: Image PixelRGBA8 -> Picture
-fromImageRGBA8 (Image { imageWidth = w, imageHeight = h, imageData = imgData }) = bitmapOfForeignPtr w h (BitmapFormat TopToBottom PxRGBA) ptr False
-            where (ptr, _, _) = unsafeToForeignPtr imgData
+fromImageRGBA8 (Image{imageWidth = w, imageHeight = h, imageData = imgData}) = bitmapOfForeignPtr w h (BitmapFormat TopToBottom PxRGBA) ptr False
+ where
+  (ptr, _, _) = unsafeToForeignPtr imgData
 
 untilEvent :: (Event -> Bool) -> Viewport () -> Viewport ()
 untilEvent f m = repeatActions %= ((f, m) :)

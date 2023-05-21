@@ -2,6 +2,7 @@ module Reticule.Types (
   RenderedImage,
   Ray (..),
   Point,
+  Color,
   dot,
   distance,
   makeUnitVec,
@@ -24,8 +25,9 @@ data Ray = Ray
   deriving (Show, Eq, Ord)
 
 type Point = V3 Float
+type Color = V3 Float
 
-toRGBA8 :: Point -> PixelRGBA8
+toRGBA8 :: Color -> PixelRGBA8
 toRGBA8 (V3 r g b) = PixelRGBA8 (floor (r * 255.99)) 
                                 (floor (g * 255.99))
                                 (floor (b * 255.99))
@@ -38,7 +40,5 @@ makeUnitVec vec =
 {-# INLINE makeUnitVec #-}
 
 unitVec :: Point -> Point
-unitVec v = v / toVec3 (quadrance v)
- where
-  toVec3 x = V3 x x x
+unitVec v = v / pure (quadrance v)
 {-# INLINE unitVec #-}
