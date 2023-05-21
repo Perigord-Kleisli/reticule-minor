@@ -40,6 +40,8 @@ library
     Reticule.Types
     Reticule.Utils
     Reticule.Renderer
+    Data.PartialNum
+    Data.Cast
 
   -- other-modules:
   -- other-extensions:
