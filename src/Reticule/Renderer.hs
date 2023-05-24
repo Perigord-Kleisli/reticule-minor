@@ -34,12 +34,12 @@ renderer image = do
       ray =
         Ray
           origin
-          ( lower_left
-              + scalar u
-                * horizontal
-              + scalar v
-                * vertical
-          )
+          (lower_left
+            + scalar u
+              * horizontal
+            + scalar v
+              * vertical)
+
     writePixel
       image
       x
@@ -52,10 +52,17 @@ renderer image = do
       a = dot ray.direction ray.direction
       b = 2 * dot oc ray.direction
       c = dot oc oc - radius ** 2
+      descriminant = b ** 2 - 4 * a * c
      in
-      (b ** 2 - 4 * a * c) > 0
-  color r@(Ray _ dir)
-    | hitSphere (V3 0 0 (-1)) 0.5 r = V3 1 0 0
-    | otherwise =
-        let t = (dir ^. _y + 1) / 2
-         in scalar (1 - t) * scalar 1 + scalar t * V3 0.5 0.7 1.0
+      if (b ** 2 - 4 * a * c) > 0
+        then Just $ (-b - sqrt descriminant) / 2.0 * a
+        else Nothing
+
+  color ray = case hitSphere sphereXYZ sphereRadius ray of
+    Just t -> makeUnitVec ((at t ray - sphereXYZ) + 1)
+    Nothing ->
+      let t = (makeUnitVec (direction ray) ^. _y + 1.0) / 2
+       in (1.0 - scalar t) * V3 1 1 1 + scalar t * V3 0.5 0.7 1.0
+   where
+    sphereXYZ = V3 0 0 (-1)
+    sphereRadius = 0.5

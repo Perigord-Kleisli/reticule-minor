@@ -8,6 +8,7 @@ module Reticule.Types (
   makeUnitVec,
   unitVec,
   toRGBA8,
+  at,
 ) where
 
 import Codec.Picture.Types
@@ -24,14 +25,19 @@ data Ray = Ray
   }
   deriving (Show, Eq, Ord)
 
+at :: Float -> Ray -> Point
+at t (Ray origin' direction') = origin' + direction' * pure t
+
 type Point = V3 Float
 type Color = V3 Float
 
 toRGBA8 :: Color -> PixelRGBA8
-toRGBA8 (V3 r g b) = PixelRGBA8 (floor (r * 255.99)) 
-                                (floor (g * 255.99))
-                                (floor (b * 255.99))
-                                255
+toRGBA8 (V3 r g b) =
+  PixelRGBA8
+    (floor (r * 255.99))
+    (floor (g * 255.99))
+    (floor (b * 255.99))
+    255
 
 makeUnitVec :: Point -> Point
 makeUnitVec vec =
