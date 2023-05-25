@@ -1,1 +1,2 @@
 packages: ./reticule-minor.cabal
+          ./devlog/reticule-devlog.cabal

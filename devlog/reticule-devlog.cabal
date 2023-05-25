@@ -1,0 +1,44 @@
+cabal-version:   3.4
+name:            reticule-devlog
+version:         0.1.0.0
+
+-- synopsis:
+-- description:
+license:         BSD-3-Clause
+license-file:    LICENSE
+author:          Trouble-Truffle
+maintainer:      perigordtruffle7318@gmail.com
+category:        Graphics
+build-type:      Simple
+extra-doc-files: CHANGELOG.md
+
+common warnings
+  ghc-options:
+    -wall -Wcompat -rtsopts -with-rtsopts =- V0 -threaded -Widentities
+    -wincomplete-record-updates -Wincomplete-uni-patterns
+    -wmissing-export-lists -Wmissing-home-modules -Wpartial-fields
+    -wredundant-constraints
+
+executable reticule-devlog
+  import:           warnings
+  main-is:          Main.hs
+
+  build-depends:
+    , base                ^>=4.16.1.0
+    , directory
+    , Interpolation
+    , JuicyPixels
+    , lens
+    , linear
+    , neat-interpolation
+    , random
+    , random-shuffle
+    , hgeometry >= 0.14
+    , reanimate
+    , reanimate-svg
+    , split
+    , template-haskell
+    , text
+
+  hs-source-dirs:   app
+  default-language: GHC2021

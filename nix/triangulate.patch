@@ -1,0 +1,13 @@
+diff --git a/src/Reanimate/Math/Triangulate.hs b/src/Reanimate/Math/Triangulate.hs
+index 8883988..d8dfe27 100644
+--- a/src/Reanimate/Math/Triangulate.hs
++++ b/src/Reanimate/Math/Triangulate.hs
+@@ -104,7 +104,7 @@ triangulate r = edgesToTriangulation (ringSize r) ds
+       | (d, Diagonal) <- V.toList (Geo.edges pg)
+       , let (a,b) = Geo.endPointData d pg ]
+     pg :: Geo.PlaneGraph () Int PolygonEdgeType PolygonFaceData a
+-    pg = triangulate' Proxy p
++    pg = triangulate' p
+     p :: SimplePolygon Int a
+     p = fromPoints $
+       [ Point2 x y :+ n
