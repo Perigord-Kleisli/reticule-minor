@@ -1,3 +1,16 @@
+diff --git a/src/Reanimate/Math/Polygon.hs b/src/Reanimate/Math/Polygon.hs
+index 2a62276..2b79c54 100644
+--- a/src/Reanimate/Math/Polygon.hs
++++ b/src/Reanimate/Math/Polygon.hs
+@@ -115,7 +115,7 @@ data APolygon a = Polygon
+   , polygonOffset        :: Int
+   , polygonTriangulation :: Triangulation
+   , polygonSSSP          :: Vector SSSP
+-  }
++  } deriving Eq
+ type Polygon = APolygon Rational
+ type P = V2 Double
+ 
 diff --git a/src/Reanimate/Math/Triangulate.hs b/src/Reanimate/Math/Triangulate.hs
 index 8883988..d8dfe27 100644
 --- a/src/Reanimate/Math/Triangulate.hs
@@ -11,3 +24,24 @@ index 8883988..d8dfe27 100644
      p :: SimplePolygon Int a
      p = fromPoints $
        [ Point2 x y :+ n
+diff --git a/src/Reanimate/PolyShape.hs b/src/Reanimate/PolyShape.hs
+index 9d6b2b3..38ce4be 100644
+--- a/src/Reanimate/PolyShape.hs
++++ b/src/Reanimate/PolyShape.hs
+@@ -74,7 +74,6 @@ import           Data.Geometry.PlanarSubdivision                      (PolygonFa
+ import qualified Data.Geometry.Point                                  as Geo
+ import qualified Data.Geometry.Polygon                                as Geo
+ import qualified Data.PlaneGraph                                      as Geo
+-import           Data.Proxy                                           (Proxy (Proxy))
+ #endif
+ 
+ -- | Shape drawn by continuous line. May have overlap, may be convex.
+@@ -216,7 +215,7 @@ decomposePolygon poly =
+   | (f, Inside) <- V.toList (Geo.internalFaces pg) ]
+ 
+   where
+-    pg = triangulate' Proxy p
++    pg = triangulate' p
+     p = Geo.fromPoints $
+       [ Geo.Point2 x y :+ ()
+       | V2 x y <- poly ]
