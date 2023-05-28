@@ -14,10 +14,10 @@ extra-doc-files: CHANGELOG.md
 
 common warnings
   ghc-options:
-    -wall -Wcompat -rtsopts -with-rtsopts =- V0 -threaded -Widentities
-    -wincomplete-record-updates -Wincomplete-uni-patterns
-    -wmissing-export-lists -Wmissing-home-modules -Wpartial-fields
-    -wredundant-constraints
+    -Wall -Wcompat -threaded -Widentities
+    -Wincomplete-record-updates -Wincomplete-uni-patterns
+    -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields
+    -Wredundant-constraints
 
 executable reticule-devlog
   import:           warnings
